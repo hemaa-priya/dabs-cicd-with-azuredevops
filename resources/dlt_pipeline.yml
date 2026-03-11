@@ -10,7 +10,6 @@ resources:
       channel: "CURRENT"
       photon: true
       continuous: false
-      development: true
 
       libraries:
         - notebook:
