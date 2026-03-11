@@ -1,195 +1,71 @@
-# =============================================================================
-# Azure DevOps CI/CD Pipeline for Databricks Asset Bundles
-# Validates on PR, deploys to staging on merge to main, promotes to prod on tag
-# =============================================================================
+# Push to dev branch   → deploys to DEV workspace
+# Merge PR to main     → deploys to PROD workspace
 
 trigger:
   branches:
     include:
       - main
-      - release/*
-  paths:
-    include:
-      - databricks.yml
-      - resources/*
-      - src/*
-      - scripts/*
-
-pr:
-  branches:
-    include:
-      - main
-  paths:
-    include:
-      - databricks.yml
-      - resources/*
-      - src/*
-
-variables:
-  - group: hp_dbr_secrets   # Variable group with tokens/credentials
-  # Expected variables in the group:
-  #   DATABRICKS_HOST_DEV, DATABRICKS_HOST_STAGING, DATABRICKS_HOST_PROD
-  #   DATABRICKS_CLIENT_ID, DATABRICKS_CLIENT_SECRET  (for service principal auth)
-  #   or ARM_TENANT_ID, ARM_CLIENT_ID, ARM_CLIENT_SECRET (for Azure AD / Entra ID)
-  - name: databricksCLIVersion
-    value: "0.236.0"
+      - dev
 
 pool:
   vmImage: "ubuntu-latest"
 
-# =============================================================================
-# Stage 1: Validate (runs on every PR)
-# =============================================================================
-stages:
-  - stage: Validate
-    displayName: "Validate Bundle"
-    condition: eq(variables['Build.Reason'], 'PullRequest')
-    jobs:
-      - job: ValidateBundle
-        displayName: "Lint & Validate DAB"
-        steps:
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: "3.11"
-            displayName: "Set up Python"
+variables:
+  - group: hp_dbr_secrets
 
-          - script: |
-              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+stages:
+  # --- Push to dev branch → deploy to DEV workspace ---
+  - stage: DeployDev
+    displayName: "Deploy to DEV"
+    condition: |
+      and(
+        ne(variables['Build.Reason'], 'PullRequest'),
+        eq(variables['Build.SourceBranch'], 'refs/heads/dev')
+      )
+    jobs:
+      - job: DevDeploy
+        steps:
+          - checkout: self
+
+          - script: curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
             displayName: "Install Databricks CLI"
 
-          - script: |
-              databricks bundle validate -t dev
-            displayName: "Validate bundle (dev target)"
+          - script: databricks bundle validate -t dev
+            displayName: "Validate (dev)"
             env:
               DATABRICKS_HOST: $(DATABRICKS_HOST_DEV)
-              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
-              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN_DEV)
 
-          - script: |
-              databricks bundle validate -t prod
-            displayName: "Validate bundle (prod target)"
+          - script: databricks bundle deploy -t dev --auto-approve
+            displayName: "Deploy to DEV workspace"
             env:
-              DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
-              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
-              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+              DATABRICKS_HOST: $(DATABRICKS_HOST_DEV)
+              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN_DEV)
 
-          - script: |
-              echo "Running Python linting..."
-              pip install ruff --quiet
-              ruff check src/ --select E,W,F --ignore E501
-            displayName: "Lint Python notebooks"
-            continueOnError: true
-
-  # =============================================================================
-  # Stage 2: Deploy to Staging (runs on merge to main)
-  # =============================================================================
-  - stage: DeployStaging
-    displayName: "Deploy to Staging"
-    dependsOn: []
+  # --- Merge to main → deploy to PROD workspace ---
+  - stage: DeployProd
+    displayName: "Deploy to PROD"
     condition: |
       and(
         ne(variables['Build.Reason'], 'PullRequest'),
         eq(variables['Build.SourceBranch'], 'refs/heads/main')
       )
     jobs:
-      - deployment: DeployToStaging
-        displayName: "Deploy DAB to Staging"
-        environment: "databricks-staging"   # Azure DevOps environment for approvals
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
+      - job: ProdDeploy
+        steps:
+          - checkout: self
 
-                - script: |
-                    curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
-                  displayName: "Install Databricks CLI"
+          - script: curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+            displayName: "Install Databricks CLI"
 
-                - script: |
-                    echo "=== Validating bundle for staging ==="
-                    databricks bundle validate -t staging
-                  displayName: "Validate bundle (staging)"
-                  env:
-                    DATABRICKS_HOST: $(DATABRICKS_HOST_STAGING)
-                    DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
-                    DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+          - script: databricks bundle validate -t prod
+            displayName: "Validate (prod)"
+            env:
+              DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
+              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN_PROD)
 
-                - script: |
-                    echo "=== Deploying to staging workspace ==="
-                    databricks bundle deploy -t staging --auto-approve
-                  displayName: "Deploy bundle to staging"
-                  env:
-                    DATABRICKS_HOST: $(DATABRICKS_HOST_STAGING)
-                    DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
-                    DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
-
-                - script: |
-                    echo "=== Running ETL job in staging ==="
-                    databricks bundle run etl_orders_job -t staging
-                  displayName: "Run integration test (ETL job)"
-                  env:
-                    DATABRICKS_HOST: $(DATABRICKS_HOST_STAGING)
-                    DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
-                    DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
-
-                - script: |
-                    echo "=== Creating/Updating Genie Space in staging ==="
-                    pip install requests --quiet
-                    python scripts/manage_genie_space.py --target staging
-                  displayName: "Deploy Genie Space (staging)"
-                  env:
-                    DATABRICKS_TOKEN: $(DATABRICKS_TOKEN_STAGING)
-
-  # =============================================================================
-  # Stage 3: Deploy to Production (manual approval gate + release tag)
-  # =============================================================================
-  - stage: DeployProduction
-    displayName: "Deploy to Production"
-    dependsOn: DeployStaging
-    condition: succeeded()
-    jobs:
-      - deployment: DeployToProd
-        displayName: "Deploy DAB to Production"
-        environment: "databricks-production"  # Has manual approval gate configured
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
-
-                - script: |
-                    curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
-                  displayName: "Install Databricks CLI"
-
-                - script: |
-                    echo "=== Validating bundle for production ==="
-                    databricks bundle validate -t prod
-                  displayName: "Validate bundle (prod)"
-                  env:
-                    DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
-                    DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
-                    DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
-
-                - script: |
-                    echo "=== Deploying to production workspace ==="
-                    databricks bundle deploy -t prod --auto-approve
-                  displayName: "Deploy bundle to production"
-                  env:
-                    DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
-                    DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
-                    DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
-
-                - script: |
-                    echo "=== Creating/Updating Genie Space in production ==="
-                    pip install requests --quiet
-                    python scripts/manage_genie_space.py --target prod
-                  displayName: "Deploy Genie Space (prod)"
-                  env:
-                    DATABRICKS_TOKEN: $(DATABRICKS_TOKEN_PROD)
-
-                - script: |
-                    echo "=== Production deployment complete ==="
-                    echo "Deployed commit: $(Build.SourceVersion)"
-                    echo "Bundle: acc-devops-cicd-demo"
-                    echo "Target: prod"
-                  displayName: "Deployment summary"
+          - script: databricks bundle deploy -t prod --auto-approve
+            displayName: "Deploy to PROD workspace"
+            env:
+              DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
+              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN_PROD)
