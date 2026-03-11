@@ -77,13 +77,6 @@ stages:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
-          - script: pip install requests -q && python scripts/deploy_genie_spaces.py --target dev
-            displayName: "Deploy Genie Spaces (dev)"
-            env:
-              DATABRICKS_HOST: $(DATABRICKS_HOST_DEV)
-              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
-              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
-
   # --- Merge to main → deploy to PROD workspace ---
   - stage: DeployProd
     displayName: "Deploy to PROD"
@@ -109,13 +102,6 @@ stages:
 
           - script: databricks bundle deploy -t prod --auto-approve
             displayName: "Deploy to PROD workspace"
-            env:
-              DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
-              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
-              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
-
-          - script: pip install requests -q && python scripts/deploy_genie_spaces.py --target prod
-            displayName: "Deploy Genie Spaces (prod)"
             env:
               DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
