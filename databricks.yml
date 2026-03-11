@@ -46,6 +46,7 @@ targets:
     mode: production
     workspace:
       host: https://adb-7405607309453399.19.azuredatabricks.net
+      root_path: /Workspace/Users/hemapriya.nagarajan@databricks.com/.bundle/${bundle.name}/${bundle.target}
     # run_as:
     #   service_principal_name: "hp_az_sp"
     variables:

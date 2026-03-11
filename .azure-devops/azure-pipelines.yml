@@ -1,5 +1,4 @@
 # Push to dev branch   → deploys to DEV workspace
-# PR to main           → validates both targets (no deploy)
 # Merge PR to main     → deploys to PROD workspace
 # Auth: OAuth M2M (service principal)
 
@@ -50,6 +49,7 @@ stages:
   # --- Push to dev branch → deploy to DEV workspace ---
   - stage: DeployDev
     displayName: "Deploy to DEV"
+    dependsOn: []
     condition: |
       and(
         ne(variables['Build.Reason'], 'PullRequest'),
@@ -77,9 +77,16 @@ stages:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
+          - script: pip install requests -q && python genie/deploy.py --target dev
+            displayName: "Deploy Genie Spaces (dev)"
+            env:
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
   # --- Merge to main → deploy to PROD workspace ---
   - stage: DeployProd
     displayName: "Deploy to PROD"
+    dependsOn: []
     condition: |
       and(
         ne(variables['Build.Reason'], 'PullRequest'),
@@ -104,5 +111,11 @@ stages:
             displayName: "Deploy to PROD workspace"
             env:
               DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
+          - script: pip install requests -q && python genie/deploy.py --target prod
+            displayName: "Deploy Genie Spaces (prod)"
+            env:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
