@@ -1,4 +1,5 @@
 # Push to dev branch   → deploys to DEV workspace
+# PR to main           → validates both targets (no deploy)
 # Merge PR to main     → deploys to PROD workspace
 # Auth: OAuth M2M (service principal)
 
@@ -8,6 +9,11 @@ trigger:
       - main
       - dev
 
+pr:
+  branches:
+    include:
+      - main
+
 pool:
   vmImage: "ubuntu-latest"
 
@@ -15,6 +21,32 @@ variables:
   - group: hp_dbr_secrets
 
 stages:
+  # --- PR to main → validate only, no deploy ---
+  - stage: Validate
+    displayName: "Validate (PR)"
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    jobs:
+      - job: ValidateBundle
+        steps:
+          - checkout: self
+
+          - script: curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+            displayName: "Install Databricks CLI"
+
+          - script: databricks bundle validate -t dev
+            displayName: "Validate (dev)"
+            env:
+              DATABRICKS_HOST: $(DATABRICKS_HOST_DEV)
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
+          - script: databricks bundle validate -t prod
+            displayName: "Validate (prod)"
+            env:
+              DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
   # --- Push to dev branch → deploy to DEV workspace ---
   - stage: DeployDev
     displayName: "Deploy to DEV"
@@ -45,6 +77,13 @@ stages:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
+          - script: pip install requests -q && python scripts/deploy_genie_spaces.py --target dev
+            displayName: "Deploy Genie Spaces (dev)"
+            env:
+              DATABRICKS_HOST: $(DATABRICKS_HOST_DEV)
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
   # --- Merge to main → deploy to PROD workspace ---
   - stage: DeployProd
     displayName: "Deploy to PROD"
@@ -70,6 +109,13 @@ stages:
 
           - script: databricks bundle deploy -t prod --auto-approve
             displayName: "Deploy to PROD workspace"
+            env:
+              DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
+          - script: pip install requests -q && python scripts/deploy_genie_spaces.py --target prod
+            displayName: "Deploy Genie Spaces (prod)"
             env:
               DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
