@@ -1,5 +1,6 @@
 # Push to dev branch   → deploys to DEV workspace
 # Merge PR to main     → deploys to PROD workspace
+# Auth: OAuth M2M (service principal)
 
 trigger:
   branches:
@@ -34,13 +35,15 @@ stages:
             displayName: "Validate (dev)"
             env:
               DATABRICKS_HOST: $(DATABRICKS_HOST_DEV)
-              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN_DEV)
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
           - script: databricks bundle deploy -t dev --auto-approve
             displayName: "Deploy to DEV workspace"
             env:
               DATABRICKS_HOST: $(DATABRICKS_HOST_DEV)
-              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN_DEV)
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
   # --- Merge to main → deploy to PROD workspace ---
   - stage: DeployProd
@@ -62,10 +65,12 @@ stages:
             displayName: "Validate (prod)"
             env:
               DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
-              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN_PROD)
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
           - script: databricks bundle deploy -t prod --auto-approve
             displayName: "Deploy to PROD workspace"
             env:
               DATABRICKS_HOST: $(DATABRICKS_HOST_PROD)
-              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN_PROD)
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
