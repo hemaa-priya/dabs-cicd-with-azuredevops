@@ -174,9 +174,7 @@ def export_space(space_name, target, config, deployed):
     raw = raw.replace(f"{catalog}.{schema}.", "{{catalog}}.{{schema}}.")
     serialized = json.loads(raw)
 
-    # Remove server-generated IDs from join_specs
-    for join in serialized.get("instructions", {}).get("join_specs", []):
-        join.pop("id", None)
+    # Keep join_spec IDs — the API requires them
 
     space_def = {
         "title": data["title"].replace(f"{target_cfg['title_prefix']} ", ""),

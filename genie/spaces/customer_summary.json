@@ -57,6 +57,7 @@
     "instructions": {
       "join_specs": [
         {
+          "id": "01f11d3872d716ae8cf2848b7ebe7227",
           "left": {
             "identifier": "{{catalog}}.{{schema}}.silver_orders",
             "alias": "silver_orders"

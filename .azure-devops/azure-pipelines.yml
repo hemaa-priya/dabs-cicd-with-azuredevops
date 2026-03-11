@@ -49,6 +49,7 @@ stages:
   # --- Push to dev branch → deploy to DEV workspace ---
   - stage: DeployDev
     displayName: "Deploy to DEV"
+    dependsOn: []
     condition: |
       and(
         ne(variables['Build.Reason'], 'PullRequest'),
@@ -85,6 +86,7 @@ stages:
   # --- Merge to main → deploy to PROD workspace ---
   - stage: DeployProd
     displayName: "Deploy to PROD"
+    dependsOn: []
     condition: |
       and(
         ne(variables['Build.Reason'], 'PullRequest'),
