@@ -1,0 +1,28 @@
+# =============================================================================
+# Job to trigger the DLT pipeline on a schedule
+# =============================================================================
+resources:
+  jobs:
+    dlt_refresh_job:
+      name: "[${bundle.target}] DLT Pipeline Refresh"
+      description: "Triggers the orders DLT pipeline on a daily schedule"
+      tags:
+        team: "data-engineering"
+        project: "acc-devops-demo"
+
+      tasks:
+        - task_key: "refresh_dlt_pipeline"
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.orders_dlt_pipeline.id}
+
+      schedule:
+        quartz_cron_expression: "0 0 7 * * ?"
+        timezone_id: "America/Los_Angeles"
+
+      email_notifications:
+        on_failure:
+          - ${var.notification_email}
+
+      permissions:
+        - level: CAN_VIEW
+          group_name: "users"

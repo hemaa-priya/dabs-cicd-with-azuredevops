@@ -1,0 +1,52 @@
+# =============================================================================
+# Lightweight PR validation pipeline (can be used as a separate build policy)
+# =============================================================================
+
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+
+pool:
+  vmImage: "ubuntu-latest"
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: "3.11"
+    displayName: "Set up Python"
+
+  - script: |
+      curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+    displayName: "Install Databricks CLI"
+
+  - script: |
+      echo "=== Validate dev target ==="
+      databricks bundle validate -t dev
+      echo ""
+      echo "=== Validate prod target ==="
+      databricks bundle validate -t prod
+    displayName: "Validate all bundle targets"
+    env:
+      DATABRICKS_HOST: $(DATABRICKS_HOST_DEV)
+      DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+      DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
+  - script: |
+      pip install ruff --quiet
+      echo "=== Linting Python source files ==="
+      ruff check src/ --select E,W,F --ignore E501
+    displayName: "Lint Python code"
+    continueOnError: true
+
+  - script: |
+      echo "=== Checking for hardcoded secrets ==="
+      if grep -rn "dapi[a-f0-9]\{32\}" src/ resources/ databricks.yml 2>/dev/null; then
+        echo "ERROR: Found hardcoded Databricks token!"
+        exit 1
+      fi
+      echo "No hardcoded secrets found."
+    displayName: "Security scan"

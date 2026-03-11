@@ -1,0 +1,71 @@
+# =============================================================================
+# Databricks Asset Bundle - CI/CD Demo with Azure DevOps
+# Promotes artifacts (jobs, pipelines, notebooks, genie spaces) from dev → prod
+# =============================================================================
+bundle:
+  name: acc-devops-cicd-demo
+
+include:
+  - resources/*.yml
+
+# ---------------------------------------------------------------------------
+# Variables: parameterize everything that changes between environments
+# ---------------------------------------------------------------------------
+variables:
+  catalog:
+    description: "Unity Catalog catalog name"
+    default: "hp_dev"
+  schema:
+    description: "Unity Catalog schema name"
+    default: "hp_pp_schema"
+  warehouse_id:
+    description: "SQL Warehouse ID for queries and dashboards"
+  node_type:
+    description: "Compute node type"
+    default: "Standard_DS3_v2"
+  notification_email:
+    description: "Email for job failure alerts"
+    default: "hemapriya.nagarajan@databricks.com"
+
+# ---------------------------------------------------------------------------
+# Targets: one per environment (dev → prod)
+# ---------------------------------------------------------------------------
+targets:
+  dev:
+    default: true
+    mode: development
+    workspace:
+      host: https://adb-7405611575787307.7.azuredatabricks.net
+    variables:
+      catalog: "hp_dev"
+      schema: "hp_pp_schema"
+      warehouse_id: "51ab1957a8b31771"
+      node_type: "Standard_DS3_v2"
+
+  staging:
+    workspace:
+      host: https://adb-7405611575787307.7.azuredatabricks.net
+    variables:
+      catalog: "hp_dev"
+      schema: "hp_pp_schema"
+      warehouse_id: "51ab1957a8b31771"
+      node_type: "Standard_DS3_v2"
+
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-7405607309453399.19.azuredatabricks.net
+      root_path: /Workspace/Users/production/.bundle/${bundle.name}/${bundle.target}
+    run_as:
+      service_principal_name: "cicd-service-principal"
+    variables:
+      catalog: "prod_catalog"
+      schema: "prod_schema"
+      warehouse_id: "<PROD_WAREHOUSE_ID>"
+      node_type: "Standard_DS4_v2"
+      notification_email: "prod-alerts@example.com"
+    permissions:
+      - level: CAN_VIEW
+        group_name: "users"
+      - level: CAN_MANAGE
+        group_name: "admins"

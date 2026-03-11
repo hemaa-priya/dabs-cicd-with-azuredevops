@@ -1,0 +1,29 @@
+# =============================================================================
+# Lakeflow Declarative Pipeline (DLT): Streaming orders pipeline
+# =============================================================================
+resources:
+  pipelines:
+    orders_dlt_pipeline:
+      name: "[${bundle.target}] Orders DLT Pipeline"
+      catalog: ${var.catalog}
+      target: ${var.schema}
+      channel: "CURRENT"
+      photon: true
+      continuous: false
+      development: true
+
+      libraries:
+        - notebook:
+            path: ../src/pipelines/dlt_orders_pipeline.py
+
+      configuration:
+        catalog: ${var.catalog}
+        schema: ${var.schema}
+
+      clusters:
+        - label: "default"
+          node_type_id: ${var.node_type}
+          num_workers: 1
+          autoscale:
+            min_workers: 1
+            max_workers: 3

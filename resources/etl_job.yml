@@ -1,0 +1,68 @@
+# =============================================================================
+# ETL Job: Bronze → Silver → Gold notebook workflow
+# =============================================================================
+resources:
+  jobs:
+    etl_orders_job:
+      name: "[${bundle.target}] ETL Orders Pipeline"
+      description: "Runs the full medallion ETL pipeline: ingest → transform → aggregate"
+      tags:
+        team: "data-engineering"
+        project: "acc-devops-demo"
+
+      tasks:
+        - task_key: "ingest_bronze"
+          description: "Ingest raw data into bronze layer"
+          notebook_task:
+            notebook_path: ../src/notebooks/01_ingest_raw_data.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 1
+            spark_conf:
+              spark.databricks.delta.preview.enabled: "true"
+
+        - task_key: "transform_silver"
+          description: "Clean and enrich data into silver layer"
+          depends_on:
+            - task_key: "ingest_bronze"
+          notebook_task:
+            notebook_path: ../src/notebooks/02_transform_silver.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 1
+
+        - task_key: "gold_aggregations"
+          description: "Build gold-layer business aggregates"
+          depends_on:
+            - task_key: "transform_silver"
+          notebook_task:
+            notebook_path: ../src/notebooks/03_gold_aggregations.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: ${var.node_type}
+            num_workers: 1
+
+      schedule:
+        quartz_cron_expression: "0 0 6 * * ?"
+        timezone_id: "America/Los_Angeles"
+
+      email_notifications:
+        on_failure:
+          - ${var.notification_email}
+
+      permissions:
+        - level: CAN_VIEW
+          group_name: "users"
+        - level: CAN_MANAGE_RUN
+          group_name: "data-engineers"
