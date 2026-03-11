@@ -26,7 +26,7 @@ pr:
       - src/*
 
 variables:
-  - group: databricks-cicd-secrets    # Variable group with tokens/credentials
+  - group: hp_dbr_secrets   # Variable group with tokens/credentials
   # Expected variables in the group:
   #   DATABRICKS_HOST_DEV, DATABRICKS_HOST_STAGING, DATABRICKS_HOST_PROD
   #   DATABRICKS_CLIENT_ID, DATABRICKS_CLIENT_SECRET  (for service principal auth)

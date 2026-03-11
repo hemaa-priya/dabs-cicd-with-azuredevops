@@ -60,9 +60,3 @@ resources:
       email_notifications:
         on_failure:
           - ${var.notification_email}
-
-      permissions:
-        - level: CAN_VIEW
-          group_name: "users"
-        - level: CAN_MANAGE_RUN
-          group_name: "data-engineers"

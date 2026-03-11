@@ -55,17 +55,12 @@ targets:
     mode: production
     workspace:
       host: https://adb-7405607309453399.19.azuredatabricks.net
-      root_path: /Workspace/Users/production/.bundle/${bundle.name}/${bundle.target}
+    # Uncomment run_as once you have a service principal configured:
     run_as:
-      service_principal_name: "cicd-service-principal"
+      service_principal_name: "hp_az_sp"
     variables:
-      catalog: "prod_catalog"
+      catalog: "hp_prod"
       schema: "prod_schema"
-      warehouse_id: "<PROD_WAREHOUSE_ID>"
-      node_type: "Standard_DS4_v2"
-      notification_email: "prod-alerts@example.com"
-    permissions:
-      - level: CAN_VIEW
-        group_name: "users"
-      - level: CAN_MANAGE
-        group_name: "admins"
+      warehouse_id: "e5593d010b1c6d00"
+      node_type: "Standard_DS3_v2"
+      notification_email: "hemapriya.nagarajan@databricks.com"

@@ -6,8 +6,8 @@
 
 # COMMAND ----------
 
-dbutils.widgets.text("catalog", "dev_catalog", "Catalog")
-dbutils.widgets.text("schema", "dev_schema", "Schema")
+dbutils.widgets.text("catalog", "hp_dev", "Catalog")
+dbutils.widgets.text("schema", "hp_pp_schema", "Schema")
 
 catalog = dbutils.widgets.get("catalog")
 schema = dbutils.widgets.get("schema")
