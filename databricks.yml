@@ -46,8 +46,8 @@ targets:
     mode: production
     workspace:
       host: https://adb-7405607309453399.19.azuredatabricks.net
-    run_as:
-      service_principal_name: "hp_az_sp"
+    # run_as:
+    #   service_principal_name: "hp_az_sp"
     variables:
       catalog: "hp_prod"
       schema: "prod_schema"
