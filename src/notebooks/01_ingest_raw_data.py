@@ -74,7 +74,7 @@ print(f"Ingested {row_count} rows into {catalog}.{schema}.bronze_orders")
 
 # COMMAND ----------
 
-assert row_count > 0, "Bronze table is empty after ingestion!"
+assert row_count > 0, "Bronze table is empty after ingestion! yayayy !!"
 null_check = spark.sql("SELECT COUNT(*) as null_count FROM bronze_orders WHERE order_id IS NULL").first()[0]
 assert null_check == 0, f"Found {null_check} null order_ids!"
 print("Data quality checks passed.")
