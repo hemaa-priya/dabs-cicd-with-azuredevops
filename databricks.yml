@@ -28,7 +28,7 @@ variables:
     default: "hemapriya.nagarajan@databricks.com"
 
 # ---------------------------------------------------------------------------
-# Targets: one per environment (dev → prod)
+# Targets: dev and prod only
 # ---------------------------------------------------------------------------
 targets:
   dev:
@@ -42,20 +42,10 @@ targets:
       warehouse_id: "51ab1957a8b31771"
       node_type: "Standard_DS3_v2"
 
-  staging:
-    workspace:
-      host: https://adb-7405611575787307.7.azuredatabricks.net
-    variables:
-      catalog: "hp_dev"
-      schema: "hp_pp_schema"
-      warehouse_id: "51ab1957a8b31771"
-      node_type: "Standard_DS3_v2"
-
   prod:
     mode: production
     workspace:
       host: https://adb-7405607309453399.19.azuredatabricks.net
-    # Uncomment run_as once you have a service principal configured:
     run_as:
       service_principal_name: "hp_az_sp"
     variables:
