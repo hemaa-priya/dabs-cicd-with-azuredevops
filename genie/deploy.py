@@ -19,6 +19,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -42,7 +43,7 @@ def save_json(path, data):
 
 
 def get_token(host):
-    """Get an access token via OAuth M2M or fall back to DATABRICKS_TOKEN."""
+    """Get an access token via OAuth M2M, env-var PAT, or Databricks CLI."""
     client_id = os.environ.get("DATABRICKS_CLIENT_ID")
     client_secret = os.environ.get("DATABRICKS_CLIENT_SECRET")
 
@@ -60,7 +61,22 @@ def get_token(host):
     if token:
         return token
 
-    print("ERROR: Set DATABRICKS_CLIENT_ID + DATABRICKS_CLIENT_SECRET, or DATABRICKS_TOKEN")
+    try:
+        result = subprocess.run(
+            ["databricks", "auth", "token", "--host", host],
+            capture_output=True, text=True, timeout=30,
+        )
+        if result.returncode == 0:
+            data = json.loads(result.stdout)
+            token = data.get("access_token")
+            if token:
+                print(f"  Using token from Databricks CLI for {host}")
+                return token
+    except (FileNotFoundError, subprocess.TimeoutExpired, json.JSONDecodeError):
+        pass
+
+    print("ERROR: No auth found. Set DATABRICKS_CLIENT_ID + DATABRICKS_CLIENT_SECRET,")
+    print("       DATABRICKS_TOKEN, or configure `databricks auth login`.")
     sys.exit(1)
 
 

@@ -1,6 +1,9 @@
 {
   "dev": {
-    "customer_summary": "01f11d2abbaf1f97b86f5194cbdcb5cc"
+    "weather_genie": "01f1238004e213aa990d1756eb3cc998",
+    "healthgenie": "01f123b2277b11f4ab89a028c9774cea"
   },
-  "prod": {}
+  "prod": {
+    "weather_genie": "01f12381dedb1036a8d70028ac8cb16d"
+  }
 }
