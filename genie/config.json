@@ -1,17 +1,17 @@
 {
   "targets": {
     "dev": {
-      "host": "https://adb-7405611575787307.7.azuredatabricks.net",
+      "host": "https://adb-7405615136580572.12.azuredatabricks.net",
       "catalog": "hp_dev",
       "schema": "hp_pp_schema",
-      "warehouse_id": "51ab1957a8b31771",
+      "warehouse_id": "4e06edd219e3d122",
       "title_prefix": "[dev]"
     },
     "prod": {
-      "host": "https://adb-7405607309453399.19.azuredatabricks.net",
+      "host": "https://adb-7405617613914594.14.azuredatabricks.net/",
       "catalog": "hp_prod",
       "schema": "prod_schema",
-      "warehouse_id": "e5593d010b1c6d00",
+      "warehouse_id": "d74c9bc5a5f81b53",
       "title_prefix": "[prod]"
     }
   }
