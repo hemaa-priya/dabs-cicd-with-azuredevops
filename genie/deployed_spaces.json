@@ -4,6 +4,7 @@
     "healthgenie": "01f123b2f50d115db7de5398d9690a44"
   },
   "prod": {
-    "weather_genie": "01f12381dedb1036a8d70028ac8cb16d"
+    "weather_genie": "01f12381dedb1036a8d70028ac8cb16d",
+    "healthgenie": "01f123b56d9b1153bacac6145d8dcdf0"
   }
 }
