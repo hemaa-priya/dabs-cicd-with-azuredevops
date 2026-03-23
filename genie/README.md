@@ -90,6 +90,32 @@ python3 genie/deploy.py --target dev
    - Deploy `my_new_space` to prod
    - Commit the prod space ID back to `main`
 
+### Important: First Prod Deploy Creates Duplicates
+
+The first time a new space is deployed to prod, there is no prod ID in `deployed_spaces.json`, so the script creates a new space. The pipeline attempts to commit the new ID back to `main`, but this requires the Azure DevOps build service account to have **Contribute** permission on the repo.
+
+**If the commit-back fails** (or the pipeline runs again before the commit is merged), a duplicate space is created in prod.
+
+**To prevent duplicates**, after the first prod deploy of a new space:
+
+1. Open the new space in the prod workspace and copy the space ID from the URL
+2. Add it manually to `deployed_spaces.json` under `prod`:
+
+```json
+{
+  "prod": {
+    "my_new_space": "<SPACE_ID_FROM_PROD_URL>"
+  }
+}
+```
+
+3. Commit and push to `main`
+
+All subsequent CI/CD runs will update (PATCH) instead of creating duplicates.
+
+**To enable automatic commit-back** (so you don't have to do this manually):
+- Azure DevOps → Project Settings → Repos → Security → `<Project> Build Service` → set **Contribute** to **Allow**
+
 ## Updating an Existing Genie Space
 
 1. Edit the space in the **dev workspace UI**
