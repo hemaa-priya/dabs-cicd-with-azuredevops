@@ -46,7 +46,7 @@ stages:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
-  # --- Push to dev branch → deploy to DEV workspace ---
+  # --- Push to dev branch → deploy to DEV workspace, sync Genie Spaces back ---
   - stage: DeployDev
     displayName: "Deploy to DEV"
     dependsOn: []
@@ -59,6 +59,7 @@ stages:
       - job: DevDeploy
         steps:
           - checkout: self
+            persistCredentials: true
 
           - script: curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
             displayName: "Install Databricks CLI"
@@ -82,6 +83,31 @@ stages:
             env:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
+          - script: |
+              echo "Exporting Genie Spaces from DEV workspace..."
+              for space_file in genie/spaces/*.json; do
+                space_name=$(basename "$space_file" .json)
+                echo "  Exporting $space_name..."
+                python genie/deploy.py --target dev --export "$space_name" || true
+              done
+            displayName: "Export Genie Spaces from DEV (sync back)"
+            env:
+              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
+              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
+          - script: |
+              git config user.email "cicd-pipeline@azuredevops.com"
+              git config user.name "CI/CD Pipeline"
+              git add genie/spaces/ genie/deployed_spaces.json
+              if git diff --cached --quiet; then
+                echo "No Genie Space changes to commit."
+              else
+                git commit -m "[skip ci] Sync Genie Spaces from DEV workspace"
+                git push origin HEAD:dev
+                echo "Committed and pushed updated Genie Space definitions."
+              fi
+            displayName: "Commit exported spaces back to repo"
 
   # --- Merge to main → deploy to PROD workspace ---
   - stage: DeployProd
