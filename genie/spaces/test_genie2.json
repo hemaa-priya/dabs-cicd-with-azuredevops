@@ -1,10 +1,16 @@
 {
   "title": "test_2",
-  "description": "This space provides a synthetic sample of healthcare claims data, enabling educational and exploratory analysis of patient demographics, diagnoses, procedures, provider details, and claim financials.\n\n**Capabilities:**\n- Analyze patterns in medical and pharmacy claims, such as common diagnoses, procedures, and service utilization.\n- Segment claims by patient demographics (age, gender, geography) or provider information.\n- Examine claim types (professional vs. institutional), service dates, and payer types.\n- Evaluate financial metrics including line charges and allowed amounts.\n- Explore provider networks through National Provider Identifiers (NPIs) and taxonomy codes.\n\n**Limitations:**\n- Data is synthetic and intended only for non-production, educational use\u2014results do not reflect real patient or provider behavior.\n- The dataset is limited in size (1,500+ patients) and does not cover all healthcare scenarios.\n- Not suitable for commercial, regulatory reporting, or patient-level decision-making.\n- Does not contain actual patient identifiers or allow access to broader HealthVerity data; for real-world or project-specific data, contact HealthVerity at [https://www.healthverity.com/contact/](https://www.healthverity.com/contact/).",
+  "description": "This space provides a synthetic sample of healthcare claims data, enabling educational and exploratory analysis of patient demographics, diagnoses, procedures, provider details, and claim financials.\n\n**Capabilities:**\n\n- Analyz",
   "serialized_space": {
     "version": 2,
     "config": {
       "sample_questions": [
+        {
+          "id": "01f1269bbe9612568d71a5223af36289",
+          "question": [
+            "What are the counts of each claim type (professional vs institutional) in the claims_sample_synthetic dataset?"
+          ]
+        },
         {
           "id": "01f1267436931c02a7ba191b766a0764",
           "question": [
