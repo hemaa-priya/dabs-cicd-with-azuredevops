@@ -1,0 +1,62 @@
+{
+  "title": "my_genie",
+  "description": "This space provides insights into NYC taxi trip patterns, including trip timing, distance, fare amounts, and zip code-level pickup and drop-off locations.\n\n**Capabilities:**\n- Analyze trip volumes, durations, and average distances by time or zip code.\n- Identify fare trends and compare fare amounts across different locations and times.\n- Track peak travel times and hotspots for pickups and drop-offs.\n\n**Limitations:**\n- Cannot analyze passenger demographics, payment types, or taxi vehicle details.\n- No information on traffic conditions, weather, or trip purposes.\n- Analysis is limited to data present; external contextual factors are not included.",
+  "serialized_space": {
+    "version": 2,
+    "config": {
+      "sample_questions": [
+        {
+          "id": "01f1269db7aa1b06b1b70ab1a360efd3",
+          "question": [
+            "What is the distribution (min, max, average, median) of trip distances in the NYC taxi trips dataset?"
+          ]
+        },
+        {
+          "id": "01f1269db78e165d83960b043c7c4534",
+          "question": [
+            "What is the distribution (min, max, average, median) of trip distances in the NYC taxi trips dataset?"
+          ]
+        },
+        {
+          "id": "01f1269db68b164486a7c0a3123727c9",
+          "question": [
+            "What tables are there and how are they connected? Give me a short summary."
+          ]
+        }
+      ]
+    },
+    "data_sources": {
+      "tables": [
+        {
+          "identifier": "samples.nyctaxi.trips",
+          "column_configs": [
+            {
+              "column_name": "dropoff_zip",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "fare_amount",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "pickup_zip",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "tpep_dropoff_datetime",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "tpep_pickup_datetime",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "trip_distance",
+              "enable_format_assistance": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
