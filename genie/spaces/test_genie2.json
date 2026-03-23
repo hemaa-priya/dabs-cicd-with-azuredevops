@@ -1,0 +1,205 @@
+{
+  "title": "test_2",
+  "description": "This space provides a synthetic sample of healthcare claims data, enabling educational and exploratory analysis of patient demographics, diagnoses, procedures, provider details, and claim financials.\n\n**Capabilities:**\n- Analyze patterns in medical and pharmacy claims, such as common diagnoses, procedures, and service utilization.\n- Segment claims by patient demographics (age, gender, geography) or provider information.\n- Examine claim types (professional vs. institutional), service dates, and payer types.\n- Evaluate financial metrics including line charges and allowed amounts.\n- Explore provider networks through National Provider Identifiers (NPIs) and taxonomy codes.\n\n**Limitations:**\n- Data is synthetic and intended only for non-production, educational use\u2014results do not reflect real patient or provider behavior.\n- The dataset is limited in size (1,500+ patients) and does not cover all healthcare scenarios.\n- Not suitable for commercial, regulatory reporting, or patient-level decision-making.\n- Does not contain actual patient identifiers or allow access to broader HealthVerity data; for real-world or project-specific data, contact HealthVerity at [https://www.healthverity.com/contact/](https://www.healthverity.com/contact/).",
+  "serialized_space": {
+    "version": 2,
+    "config": {
+      "sample_questions": [
+        {
+          "id": "01f1267436931c02a7ba191b766a0764",
+          "question": [
+            "What is the distribution of patient years of birth in the claims_sample_synthetic dataset?"
+          ]
+        },
+        {
+          "id": "01f1267280c01ebe90105c5b4d4120e0",
+          "question": [
+            "What is the monthly count of claims based on the date_service field in the claims_sample_synthetic dataset?"
+          ]
+        },
+        {
+          "id": "01f126727fe31805ada5608810d5d68b",
+          "question": [
+            "What tables are there and how are they connected? Give me a short summary."
+          ]
+        }
+      ]
+    },
+    "data_sources": {
+      "tables": [
+        {
+          "identifier": "samples.healthverity.claims_sample_synthetic",
+          "column_configs": [
+            {
+              "column_name": "admit_diagnosis_ind",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "claim_id",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "claim_type",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "date_service",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "diagnosis_code",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "diagnosis_code_qual",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "hvid",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "inst_admit_source_std_id",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "inst_admit_type_std_id",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "inst_discharge_status_std_id",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "inst_drg_std_id",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "inst_type_of_bill_std_id",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "line_allowed",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "line_charge",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "patient_gender",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "patient_state",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "patient_year_of_birth",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "patient_zip3",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "payer_type",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "place_of_service_std_id",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "procedure_code",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "procedure_code_qual",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "procedure_modifier_1",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "procedure_modifier_2",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "procedure_modifier_3",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "procedure_modifier_4",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "procedure_units_billed",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "prov_billing_npi",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "prov_billing_std_taxonomy",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "prov_referring_npi",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "prov_referring_std_taxonomy",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "prov_rendering_npi",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "prov_rendering_std_taxonomy",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "revenue_code",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "service_line_number",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

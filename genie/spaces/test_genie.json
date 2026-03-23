@@ -1,0 +1,761 @@
+{
+  "title": "test_genie",
+  "description": "This space enables exploration and analysis of daily historical weather data for the top 50 global cities, supporting business insights and operational planning.\n\n**Capabilities:**\n- Compare weather patterns (temperature, precipitation, humidity, etc.) across major cities and time periods.\n- Analyze correlations between weather factors and business outcomes, such as supply chain risks, energy demand forecasts, and sales projections.\n- Identify trends, regional variability, and outliers in weather conditions to inform risk management and targeted marketing strategies.\n- Build visualizations (e.g., time series, heatmaps) to better understand weather impact on economic activities.\n- Access both imperial and metric unit datasets for flexible analysis needs.\n- View additional data offerings via the [Databricks Marketplace listing.](https://marketplace.databricks.com/consumer/listings/235b45d2-d625-4c1c-90a2-68e4568dda40)\n\n**Limitations:**\n- Data covers only a one-month sample and a limited set of cities and weather attributes.\n- Not suited for production use or detailed long-term trend analysis.\n- Lacks certain advanced weather parameters and extended historical range available in the full AccuWeather Data Suite.",
+  "serialized_space": {
+    "version": 2,
+    "config": {
+      "sample_questions": [
+        {
+          "id": "01f1266b518b161ab55403a2ee592956",
+          "question": [
+            "What is the distribution (min, max, average, median) of the average temperature for each city?"
+          ]
+        },
+        {
+          "id": "01f1266b4baf1c94a0873f32c1cc8c22",
+          "question": [
+            "What is the monthly average cloud cover percentage across all cities?"
+          ]
+        },
+        {
+          "id": "01f1266b4b1118228745e8c5cd47f425",
+          "question": [
+            "What are the different predominant precipitation types recorded and their counts?"
+          ]
+        },
+        {
+          "id": "01f1266b4a411830824bb316b833b825",
+          "question": [
+            "What tables are there and how are they connected? Give me a short summary."
+          ]
+        }
+      ]
+    },
+    "data_sources": {
+      "tables": [
+        {
+          "identifier": "samples.accuweather.forecast_daily_calendar_imperial",
+          "column_configs": [
+            {
+              "column_name": "city_name",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "cloud_cover_perc_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "cloud_cover_perc_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "cloud_cover_perc_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "country_code",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "date",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "degree_days_cooling",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "degree_days_freezing",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "degree_days_growing",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "degree_days_heating",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "has_ice",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "has_precipitation",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "has_rain",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "has_snow",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "humidity_relative_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "humidity_relative_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "humidity_relative_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "ice_lwe_rate_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "ice_lwe_rate_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "ice_lwe_rate_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "ice_lwe_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "ice_probability",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "index_air_quality_24hr_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "index_uv_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "index_uv_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "index_uv_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "latitude",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "longitude",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "minutes_of_ice_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "minutes_of_precipitation_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "minutes_of_rain_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "minutes_of_snow_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "minutes_of_sun_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_lwe_rate_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_lwe_rate_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_lwe_rate_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_lwe_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_probability",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_type_desc_predominant",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "rain_lwe_rate_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "rain_lwe_rate_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "rain_lwe_rate_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "rain_lwe_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "rain_probability",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_liquid_ratio_accuweather_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_liquid_ratio_accuweather_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_liquid_ratio_accuweather_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_lwe_rate_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_lwe_rate_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_lwe_rate_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_lwe_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_probability",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "solar_irradiance_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "solar_irradiance_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "solar_irradiance_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_dew_point_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_dew_point_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_dew_point_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_heat_index_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_heat_index_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_heat_index_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_shade_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_shade_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_shade_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_wind_chill_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_wind_chill_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_wind_chill_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "visibility_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "visibility_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "visibility_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_direction_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_gust_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_gust_direction_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_gust_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_gust_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_speed_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_speed_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_speed_min",
+              "enable_format_assistance": true
+            }
+          ]
+        },
+        {
+          "identifier": "samples.accuweather.forecast_daily_calendar_metric",
+          "column_configs": [
+            {
+              "column_name": "city_name",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "cloud_cover_perc_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "cloud_cover_perc_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "cloud_cover_perc_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "country_code",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "date",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "degree_days_cooling",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "degree_days_freezing",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "degree_days_growing",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "degree_days_heating",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "has_ice",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "has_precipitation",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "has_rain",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "has_snow",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "humidity_relative_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "humidity_relative_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "humidity_relative_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "ice_lwe_rate_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "ice_lwe_rate_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "ice_lwe_rate_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "ice_lwe_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "ice_probability",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "index_air_quality_24hr_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "index_uv_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "index_uv_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "index_uv_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "latitude",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "longitude",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "minutes_of_ice_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "minutes_of_precipitation_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "minutes_of_rain_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "minutes_of_snow_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "minutes_of_sun_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_lwe_rate_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_lwe_rate_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_lwe_rate_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_lwe_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_probability",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "precipitation_type_desc_predominant",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "rain_lwe_rate_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "rain_lwe_rate_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "rain_lwe_rate_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "rain_lwe_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "rain_probability",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_liquid_ratio_accuweather_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_liquid_ratio_accuweather_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_liquid_ratio_accuweather_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_lwe_rate_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_lwe_rate_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_lwe_rate_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_lwe_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_probability",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "snow_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "solar_irradiance_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "solar_irradiance_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "solar_irradiance_total",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_dew_point_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_dew_point_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_dew_point_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_heat_index_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_heat_index_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_heat_index_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_shade_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_shade_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_realfeel_shade_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_wind_chill_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_wind_chill_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "temperature_wind_chill_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "visibility_avg",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "visibility_max",
+              "enable_format_assistance": true,
+              "enable_entity_matching": true
+            },
+            {
+              "column_name": "visibility_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_direction_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_gust_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_gust_direction_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_gust_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_gust_min",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_speed_avg",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_speed_max",
+              "enable_format_assistance": true
+            },
+            {
+              "column_name": "wind_speed_min",
+              "enable_format_assistance": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

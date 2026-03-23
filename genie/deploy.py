@@ -209,6 +209,8 @@ def main():
     parser.add_argument("--target", choices=["dev", "prod"], required=True)
     parser.add_argument("--export", metavar="SPACE_NAME",
                         help="Re-export a space from workspace back to local JSON")
+    parser.add_argument("--export-all", action="store_true",
+                        help="Export all spaces registered in deployed_spaces.json for the target")
     args = parser.parse_args()
 
     config = load_json(CONFIG_PATH)
@@ -216,6 +218,20 @@ def main():
 
     if args.export:
         export_space(args.export, args.target, config, deployed)
+        return
+
+    if args.export_all:
+        target_spaces = deployed.get(args.target, {})
+        if not target_spaces:
+            print(f"No deployed spaces found for {args.target} in deployed_spaces.json")
+            return
+        print(f"Exporting {len(target_spaces)} Genie Space(s) from {args.target}...")
+        for space_name in target_spaces:
+            try:
+                export_space(space_name, args.target, config, deployed)
+            except Exception as e:
+                print(f"  WARNING: Failed to export '{space_name}': {e}")
+        print("\nDone.")
         return
 
     space_files = sorted(SPACES_DIR.glob("*.json"))

@@ -46,7 +46,7 @@ stages:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
-  # --- Push to dev branch → deploy to DEV workspace ---
+  # --- Push to dev branch → deploy to DEV, export Genie Spaces, commit back ---
   - stage: DeployDev
     displayName: "Deploy to DEV"
     dependsOn: []
@@ -59,6 +59,7 @@ stages:
       - job: DevDeploy
         steps:
           - checkout: self
+            persistCredentials: 'true'
 
           - script: curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
             displayName: "Install Databricks CLI"
@@ -77,11 +78,24 @@ stages:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
-          - script: pip install requests -q && python genie/deploy.py --target dev
-            displayName: "Deploy Genie Spaces (dev)"
+          - script: pip install requests -q && python genie/deploy.py --target dev --export-all
+            displayName: "Export all Genie Spaces from DEV"
             env:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
+          - script: |
+              git config user.email "cicd-pipeline@azuredevops.com"
+              git config user.name "CI/CD Pipeline"
+              git add genie/spaces/ genie/deployed_spaces.json
+              if git diff --cached --quiet; then
+                echo "No Genie Space changes to commit."
+              else
+                git commit -m "[skip ci] Sync Genie Spaces from DEV"
+                git push origin HEAD:dev
+                echo "Committed updated Genie Space definitions."
+              fi
+            displayName: "Commit Genie Space exports back to repo"
 
   # --- Merge to main → deploy to PROD workspace ---
   - stage: DeployProd
@@ -96,6 +110,7 @@ stages:
       - job: ProdDeploy
         steps:
           - checkout: self
+            persistCredentials: 'true'
 
           - script: curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
             displayName: "Install Databricks CLI"
@@ -119,3 +134,16 @@ stages:
             env:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
+
+          - script: |
+              git config user.email "cicd-pipeline@azuredevops.com"
+              git config user.name "CI/CD Pipeline"
+              git add genie/deployed_spaces.json
+              if git diff --cached --quiet; then
+                echo "No new space IDs to commit."
+              else
+                git commit -m "[skip ci] Update prod Genie Space IDs"
+                git push origin HEAD:main
+                echo "Committed updated deployed_spaces.json with prod space IDs."
+              fi
+            displayName: "Commit prod space IDs back to repo"

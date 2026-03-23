@@ -8,7 +8,7 @@
       "title_prefix": "[dev]"
     },
     "prod": {
-      "host": "https://adb-7405617613914594.14.azuredatabricks.net/",
+      "host": "https://adb-7405617613914594.14.azuredatabricks.net",
       "catalog": "hp_prod",
       "schema": "prod_schema",
       "warehouse_id": "d74c9bc5a5f81b53",
