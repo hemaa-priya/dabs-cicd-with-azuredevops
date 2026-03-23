@@ -59,7 +59,7 @@ stages:
       - job: DevDeploy
         steps:
           - checkout: self
-            persistCredentials: true
+            persistCredentials: 'true'
 
           - script: curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
             displayName: "Install Databricks CLI"
@@ -72,26 +72,21 @@ stages:
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
           - script: databricks bundle deploy -t dev --auto-approve
-            displayName: "Deploy to DEV workspace"
+            displayName: "Deploy DABs resources to DEV workspace"
             env:
               DATABRICKS_HOST: $(DATABRICKS_HOST_DEV)
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
 
-          - script: pip install requests -q && python genie/deploy.py --target dev
-            displayName: "Deploy Genie Spaces (dev)"
-            env:
-              DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
-              DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
-
           - script: |
-              echo "Exporting Genie Spaces from DEV workspace..."
+              pip install requests -q
+              echo "Exporting Genie Spaces from DEV workspace (captures UI changes)..."
               for space_file in genie/spaces/*.json; do
                 space_name=$(basename "$space_file" .json)
                 echo "  Exporting $space_name..."
                 python genie/deploy.py --target dev --export "$space_name" || true
               done
-            displayName: "Export Genie Spaces from DEV (sync back)"
+            displayName: "Export Genie Spaces from DEV (sync UI changes)"
             env:
               DATABRICKS_CLIENT_ID: $(DATABRICKS_CLIENT_ID)
               DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)
