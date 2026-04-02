@@ -96,6 +96,12 @@ Or use the helper script:
 
 ---
 
+## Documentation
+
+For a detailed walkthrough of the CI/CD setup, see [CICD_IMPLEMENTATION_GUIDE.md](CICD_IMPLEMENTATION_GUIDE.md).
+
+---
+
 ## Cleanup
 
 ```bash
